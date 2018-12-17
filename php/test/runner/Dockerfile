@@ -20,17 +20,17 @@ RUN mkdir -p /opt/bin
 ENV PATH=${PATH}:/opt/bin:/opt/gcloud/google-cloud-sdk/bin
 
 # Install PHP and tools
-RUN apk add php5 php5-openssl php5-json php5-phar php5-dom php5-bcmath \
-    php5-ctype php5-zip wget ca-certificates coreutils unzip --update && \
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php -r "if (hash_file('SHA384', 'composer-setup.php') === rtrim(file_get_contents('https://composer.github.io/installer.sig'))) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
-    php composer-setup.php --filename=composer --install-dir=/opt/bin && \
-    php -r "unlink('composer-setup.php');" && \
-    wget -nv -O phpunit.phar https://phar.phpunit.de/phpunit-5.7.phar && \
-    chmod +x phpunit.phar && \
-    mv phpunit.phar /opt/bin/phpunit && \
-    apk del wget unzip && \
-    rm -rf /var/cache/apk/*
+RUN apk add php5 php5-openssl php5-json php5-phar php5-dom php5-bcmath
+RUN php5-ctype php5-zip wget ca-certificates coreutils unzip --update
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+RUN php -r "if (hash_file('SHA384', 'composer-setup.php') === rtrim(file_get_contents('https://composer.github.io/installer.sig'))) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+RUN php composer-setup.php --filename=composer --install-dir=/opt/bin
+RUN php -r "unlink('composer-setup.php');"
+RUN wget -nv -O phpunit.phar https://phar.phpunit.de/phpunit-5.7.phar
+RUN chmod +x phpunit.phar
+RUN mv phpunit.phar /opt/bin/phpunit
+RUN apk del wget unzip
+RUN rm -rf /var/cache/apk/*
 
 COPY run_tests.sh /run_tests.sh
 ENTRYPOINT ["/run_tests.sh"]
